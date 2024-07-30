@@ -9,7 +9,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/JustUI" />
+            <option value="$PROJECT_DIR$/PassPort" />
+            <option value="$PROJECT_DIR$/ZaryaUI" />
             <option value="$PROJECT_DIR$/app" />
           </set>
         </option>

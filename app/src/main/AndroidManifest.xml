@@ -23,6 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.aivhich.passport.AuthActivity"
+            android:theme="@style/Theme.Physics">
+        </activity>
     </application>
 
 </manifest>

@@ -15,4 +15,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Physics"
 include(":app")
-include(":JustUI")
+include(":ZaryaUI")
+include(":PassPort")
