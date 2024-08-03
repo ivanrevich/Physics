@@ -13,13 +13,13 @@ sealed class BottomBarScreen(
     object Home : BottomBarScreen(
         route = "HOME",
         title = "Дом",
-        icon = R.drawable.ic_launcher_background,
-        activeIcon = R.drawable.ic_launcher_background
+        icon = R.drawable.baseline_home_24,
+        activeIcon = R.drawable.baseline_home_24
     )
     object Profile : BottomBarScreen(
         route = "PROFILE",
         title = "Я",
-        icon = R.drawable.ic_launcher_background,
-        activeIcon = R.drawable.ic_launcher_background
+        icon = R.drawable.baseline_person_outline_24,
+        activeIcon = R.drawable.baseline_person_24
     )
 }

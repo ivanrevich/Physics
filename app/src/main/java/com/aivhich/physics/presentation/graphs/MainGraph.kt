@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -27,6 +28,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.aivhich.physics.presentation.screens.HomeScreen
+import com.aivhich.physics.presentation.screens.ProfileScreen
+import com.aivhich.zaryaui.BodyText
 
 @Composable
 fun MainScreen(navController: NavHostController = rememberNavController()) {
@@ -65,7 +69,7 @@ fun BottomBar(navController: NavHostController) {
             ),
             tonalElevation = 0.dp,
         ) {
-            Spacer(Modifier.width(5.dp))
+            //Spacer(Modifier.width(5.dp))
             screens.forEach { item ->
                 val selected = item.route == currentDestination?.route
 
@@ -75,10 +79,10 @@ fun BottomBar(navController: NavHostController) {
                     selected = selected,
                     onClick = { navController.navigate(item.route) },
                     label = {
-                        /*Text(
+                        BodyText(
                             text = item.title,
-                            fontWeight = FontWeight.SemiBold,
-                        )*/
+                            weight = FontWeight.SemiBold,
+                        )
                     },
                     icon = {
                         androidx.compose.material3.Icon(
@@ -89,7 +93,7 @@ fun BottomBar(navController: NavHostController) {
                 )
             }
 
-            Spacer(Modifier.width(5.dp))
+            //Spacer(Modifier.width(5.dp))
         }
     }
 }
@@ -121,8 +125,10 @@ fun HomeNavGraph(navController: NavHostController) {
         }
     ) {
         composable(route = BottomBarScreen.Home.route) {
+            HomeScreen()
         }
         composable(route = BottomBarScreen.Profile.route) {
+            ProfileScreen()
         }
         detailedViewGraph(navController)
     }
@@ -143,10 +149,5 @@ fun NavGraphBuilder.detailedViewGraph(navController: NavHostController) {
 }
 
 sealed class DetailedScreen(val route: String) {
-
-    object LogOutScreen : DetailedScreen(route = "logout/{is_del}")
     object Watch : DetailedScreen(route = "watchVideo/{vid}")
-    object Home : DetailedScreen(route = "chat/{cid}")
-    object Words : DetailedScreen(route = "words/{isRepeatMode}")
-    object Vocab : DetailedScreen(route = "vocab")
 }
