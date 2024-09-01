@@ -15,8 +15,10 @@ import com.aivhich.passport.AuthActivity
 import com.aivhich.physics.presentation.graphs.RootNavigationGraph
 import com.aivhich.physics.ui.theme.PhysicsTheme
 import com.aivhich.zaryaui.HeadlineText
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

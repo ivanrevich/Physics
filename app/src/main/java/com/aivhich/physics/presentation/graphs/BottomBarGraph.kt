@@ -19,7 +19,7 @@ sealed class BottomBarScreen(
     object Profile : BottomBarScreen(
         route = "PROFILE",
         title = "Я",
-        icon = R.drawable.baseline_person_outline_24,
-        activeIcon = R.drawable.baseline_person_24
+        icon = R.drawable.baseline_account_circle_24,
+        activeIcon = R.drawable.baseline_account_circle_24
     )
 }

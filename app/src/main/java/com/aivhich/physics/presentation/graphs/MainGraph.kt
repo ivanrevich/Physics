@@ -23,12 +23,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.aivhich.physics.presentation.screens.HomeScreen
+import com.aivhich.physics.presentation.screens.LessonScreen
 import com.aivhich.physics.presentation.screens.ProfileScreen
 import com.aivhich.zaryaui.BodyText
 
@@ -60,6 +63,7 @@ fun BottomBar(navController: NavHostController) {
     val bottomBarDestination = screens.any { it.route == currentDestination?.route }
     if (bottomBarDestination) {
         NavigationBar(
+            containerColor = MaterialTheme.colorScheme.background,
             modifier = Modifier.shadow(
                 15.dp,
                 RectangleShape,
@@ -74,7 +78,9 @@ fun BottomBar(navController: NavHostController) {
                 val selected = item.route == currentDestination?.route
 
                 NavigationBarItem(
-                    colors =  NavigationBarItemDefaults.colors(),
+                    colors =  NavigationBarItemDefaults.colors(
+                        indicatorColor = MaterialTheme.colorScheme.primary
+                    ),
                     alwaysShowLabel = false,
                     selected = selected,
                     onClick = { navController.navigate(item.route) },
@@ -138,16 +144,17 @@ fun HomeNavGraph(navController: NavHostController) {
 fun NavGraphBuilder.detailedViewGraph(navController: NavHostController) {
     navigation(
         route = Graph.DETAILS,
-        startDestination = DetailedScreen.Watch.route
+        startDestination = DetailedScreen.Lesson.route
     ) {
         composable(
-            route = DetailedScreen.Watch.route,
-            /*arguments = listOf(navArgument("vid") { type = NavType.StringType })*/
+            route = DetailedScreen.Lesson.route,
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) { backStackEntry ->
+            backStackEntry.arguments?.getString("id")?.let { LessonScreen(it) }
         }
     }
 }
 
 sealed class DetailedScreen(val route: String) {
-    object Watch : DetailedScreen(route = "watchVideo/{vid}")
+    object Lesson : DetailedScreen(route = "lesson/{id}")
 }
