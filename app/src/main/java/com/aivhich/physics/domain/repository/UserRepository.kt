@@ -8,6 +8,5 @@ import com.aivhich.physics.domain.model.User
 interface UserRepository {
     suspend fun save(u: User)
     suspend fun get(token:String): Result<User>
-    suspend fun getCourse(token: String): Result<List<LevelDto>>
     suspend fun delete()
 }

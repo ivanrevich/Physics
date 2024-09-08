@@ -131,7 +131,7 @@ fun HomeNavGraph(navController: NavHostController) {
         }
     ) {
         composable(route = BottomBarScreen.Home.route) {
-            HomeScreen()
+            HomeScreen(navController)
         }
         composable(route = BottomBarScreen.Profile.route) {
             ProfileScreen()
@@ -150,7 +150,9 @@ fun NavGraphBuilder.detailedViewGraph(navController: NavHostController) {
             route = DetailedScreen.Lesson.route,
             arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("id")?.let { LessonScreen(it) }
+            backStackEntry.arguments?.getString("id")?.let {
+                LessonScreen(it, backToMain = {navController.navigate(Graph.HOME)})
+            }
         }
     }
 }

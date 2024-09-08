@@ -15,6 +15,6 @@ data class LessonDto(
     @SerializedName("description")
     val description: String,
     @SerializedName("pages")
-    val pages: List<PageDto>
+    var pages: List<PageDto>
 
 )

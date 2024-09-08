@@ -9,3 +9,5 @@ val OrangeJuice = Color(0xFFF7B801)
 val SkyBlue = Color(0xFF08A4BD)
 val LightGreen = Color(0xFF61E786)
 val WhiteX = Color(0xFFFAFAFA)
+
+val White = Color(0xFFFFFFFF)

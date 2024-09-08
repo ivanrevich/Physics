@@ -20,14 +20,14 @@ private val DarkColorScheme = darkColorScheme(
     primary = DeepBlue,
     secondary = OrangeJuice,
     tertiary = LightGreen,
-    surface = DeepSpace
+    surface = DeepSpace,
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = LightGreen,
     secondary = DeepBlue,
     tertiary = OrangeJuice,
-    surface = WhiteX
+    surface = WhiteX,
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
     surface = Color(0xFFFFFBFE),

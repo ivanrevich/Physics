@@ -34,14 +34,6 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCourse(token: String): Result<List<LevelDto>> {
-        try {
-            var out = api.getLvlOfCourse("Bearer $token")
-            return Result.Success(out)
-        }catch (e:Throwable){
-            return Result.Error(e)
-        }
-    }
 
 
     override suspend fun delete() {

@@ -1,9 +1,12 @@
 package com.aivhich.physics.presentation.custom_components
 
-import android.widget.TextView
+import android.util.Log
+import android.webkit.WebView
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,25 +20,31 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
-import androidx.core.text.HtmlCompat
 import com.aivhich.physics.R
-import com.aivhich.zaryaui.BodyText
-import com.aivhich.zaryaui.HeadlineText
+import com.aivhich.physics.presentation.vm.LessonViewModel
+import com.aivhich.zaryaui.OutlinedField
 import com.aivhich.zaryaui.PointsPanel
 import com.aivhich.zaryaui.SubText
 import com.aivhich.zaryaui.SubheadingText
@@ -52,7 +61,7 @@ fun LevelItem(text: String) {
                 .height(32.dp)
                 .zIndex(0f)
         ) {
-            val strokeWidth = 8.dp
+            val strokeWidth = 12.dp
             val color = Color.Green
             val strokeWidthPx = density.run { strokeWidth.toPx() }
             val height = size.height
@@ -67,14 +76,17 @@ fun LevelItem(text: String) {
 }
 
 @Composable
-fun LessonItem(title:String, time:String, points:String,
-               onClick:()->Unit) {
+fun LessonItem(
+    title: String, time: String, points: String, passed: Boolean,
+    onClick: () -> Unit
+) {
     Column(modifier = Modifier.fillMaxWidth()) {
         UsualPanel(
             background = MaterialTheme.colorScheme.background,
             modifier = Modifier
                 .fillMaxWidth()
                 .zIndex(1f)
+                .clickable { onClick() }
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -84,10 +96,12 @@ fun LessonItem(title:String, time:String, points:String,
                     .padding(5.dp, 10.dp)
                     .height(IntrinsicSize.Max)
             ) {
-                Row(horizontalArrangement = Arrangement.Start,
+                Row(
+                    horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .fillMaxHeight()) {
+                        .fillMaxHeight()
+                ) {
                     Image(
                         painter = painterResource(id = R.drawable.baseline_bolt_24),
                         contentDescription = "",
@@ -103,9 +117,11 @@ fun LessonItem(title:String, time:String, points:String,
                         verticalArrangement = Arrangement.SpaceAround,
                         modifier = Modifier.fillMaxHeight()
                     ) {
-                        SubheadingText(text = title,
+                        SubheadingText(
+                            text = title,
                             fontWeight = FontWeight.W600,
-                            textAlign = TextAlign.Start)
+                            textAlign = TextAlign.Start
+                        )
                         SubText(text = "$time мин.")
                     }
                 }
@@ -123,8 +139,8 @@ fun LessonItem(title:String, time:String, points:String,
                 .height(16.dp)
                 .zIndex(0f)
         ) {
-            val strokeWidth = 8.dp
-            val color = Color.Green
+            val strokeWidth = 12.dp
+            val color = if (passed) Color.Green else Color(0xFF929292)
             val strokeWidthPx = density.run { strokeWidth.toPx() }
             val height = size.height
             drawLine(
@@ -137,11 +153,145 @@ fun LessonItem(title:String, time:String, points:String,
     }
 }
 
+
 @Composable
-fun HtmlText(html: String, modifier: Modifier = Modifier) {
+fun CheckboxOption(text: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    Row(
+        modifier = Modifier.padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(
+            checked = checked,
+            onCheckedChange = onCheckedChange
+        )
+        Text(text)
+    }
+}
+
+@Composable
+fun RadioButtonOption(text: String, isSelected: Boolean, onSelect: () -> Unit) {
+    Row(
+        modifier = Modifier.padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        RadioButton(
+            selected = isSelected,
+            onClick = onSelect,
+        )
+        Text(text)
+    }
+}
+
+@Composable
+fun FormComponent(
+    answers: List<String>,
+    choosed: List<String>,
+    vm: LessonViewModel,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .then(modifier)
+    ) {
+        SubText(text = "Выбор нескольких вариантов ответа:")
+        answers.forEachIndexed { index, s ->
+            CheckboxOption(text = s, checked = choosed.contains(s)) {
+                vm.updateAnswers(s)
+            }
+        }
+    }
+}
+
+@Composable
+fun CalcComponent(
+    value: String,
+    vm: LessonViewModel,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier)
+    ) {
+        OutlinedField(
+            value = value,
+            onChange = { it -> vm.setAnswers(it) },
+            label = "Ответ на задачу",
+            error = "",
+            placeholder = "Введите ответ на задачу",
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        )
+    }
+}
+
+@Composable
+fun YesFormComponent(
+    value: String,
+    vm: LessonViewModel,
+    modifier: Modifier = Modifier
+) {
+    RadioFormComponent(
+        answers = listOf("Да", "Нет"),
+        choosed = value,
+        vm = vm,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun RadioFormComponent(
+    answers: List<String>,
+    choosed: String,
+    vm: LessonViewModel,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .then(modifier)
+    ) {
+        SubText(text = "Выбор нескольких вариантов ответа:")
+        answers.forEach { el ->
+            RadioButtonOption(text = el, isSelected = (el == choosed)) {
+                vm.setAnswers(el)
+            }
+        }
+    }
+}
+
+@Composable
+fun HtmlText(html: String? = "", modifier: Modifier = Modifier) {
+    val htmlContent = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+        
+            <!-- The loading of KaTeX is deferred to speed up page rendering -->
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+        
+            <!-- To automatically render math in text elements, include the auto-render extension: -->
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+        </head>
+        <body style="padding-right:10px; padding-left:10px;">
+        ${html ?: ""}
+        </body>
+        </html>
+    """.trimIndent()
+
     AndroidView(
-        modifier = modifier,
-        factory = { context -> TextView(context) },
-        update = { it.text = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT) }
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .then(modifier),
+        factory = { context -> WebView(context) },
+        update = { webView ->
+            webView.setBackgroundColor(Color.Transparent.toArgb())
+            webView.loadData(htmlContent, "text/html", "UTF-8")
+        }
     )
 }

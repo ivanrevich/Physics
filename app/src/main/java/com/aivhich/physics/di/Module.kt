@@ -6,12 +6,18 @@ import com.aivhich.physics.data.datasource.TokenDatabase
 import com.aivhich.physics.data.datasource.UserDatabase
 import com.aivhich.physics.data.remote.retrofit.ApiService
 import com.aivhich.physics.data.remote.retrofit.Common
+import com.aivhich.physics.data.repository.LessonRepositoryImpl
 import com.aivhich.physics.data.repository.TokenRepositoryImpl
 import com.aivhich.physics.data.repository.UserRepositoryImpl
+import com.aivhich.physics.domain.repository.LessonRepository
 import com.aivhich.physics.domain.repository.TokenRepository
 import com.aivhich.physics.domain.repository.UserRepository
+import com.aivhich.physics.domain.usecase.GetOneLessonUseCase
+import com.aivhich.physics.domain.usecase.GetPassedLessonsUseCase
 import com.aivhich.physics.domain.usecase.GetUserCourseUseCase
 import com.aivhich.physics.domain.usecase.GetUserDataUseCase
+import com.aivhich.physics.domain.usecase.GetWeekPointsUseCase
+import com.aivhich.physics.domain.usecase.UpdateProgressUseCase
 import com.aivhich.physics.domain.usecase.UserUseCase
 import dagger.Module
 import dagger.Provides
@@ -54,6 +60,13 @@ object Module {
         return TokenRepositoryImpl(dao=db.tokenDao, api = api)
     }
 
+    @Provides
+    @Singleton
+    fun provideLessonRepository(api: ApiService): LessonRepository {
+        return LessonRepositoryImpl(api = api)
+    }
+
+
 
     @Provides
     @Singleton
@@ -65,6 +78,7 @@ object Module {
     @Singleton
     fun provideUserUseCase(repository: UserRepository,
                            tokenRepository: TokenRepository,
+                           lessonRepository: LessonRepository,
                            api: ApiService,
                            tokendb:TokenDatabase,
                            userdb: UserDatabase
@@ -74,8 +88,24 @@ object Module {
                 userRepository = repository,
                 tokenRepository = tokenRepository),
             getUserCourseUseCase = GetUserCourseUseCase(
-                userRepository = repository,
-                tokenRepository = tokenRepository)
+                lessonRepository = lessonRepository,
+                tokenRepository = tokenRepository),
+            getOneLesson = GetOneLessonUseCase(
+                lessonRepository = lessonRepository,
+                tokenRepository = tokenRepository
+            ),
+            updateProgressUseCase = UpdateProgressUseCase(
+                lessonRepository = lessonRepository,
+                tokenRepository = tokenRepository
+            ),
+            getPassedLessonsUseCase = GetPassedLessonsUseCase(
+                lessonRepository = lessonRepository,
+                tokenRepository = tokenRepository
+            ),
+            getWeekPointsUseCase = GetWeekPointsUseCase(
+                lessonRepository = lessonRepository,
+                tokenRepository = tokenRepository
+            )
         )
     }
 }

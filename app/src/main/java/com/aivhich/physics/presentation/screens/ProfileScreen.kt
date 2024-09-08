@@ -46,7 +46,8 @@ import com.aivhich.zaryaui.models.CarouselIconItem
 fun ProfileScreen(vm:ProfileViewModel = hiltViewModel()) {
     val name by vm.name.observeAsState()
     val email by vm.email.observeAsState()
-    Scaffold(topBar = {
+    Scaffold(
+        topBar = {
             Row(
                 Modifier.fillMaxWidth().padding(10.dp, 5.dp, 10.dp, 0.dp).height(54.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
