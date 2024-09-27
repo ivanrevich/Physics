@@ -7,5 +7,8 @@ data class UserUseCase(
     val updateProgressUseCase: UpdateProgressUseCase,
     val getPassedLessonsUseCase: GetPassedLessonsUseCase,
     val getWeekPointsUseCase: GetWeekPointsUseCase,
-    val getLeaders:GetLeadersUseCase
+    val getLeaders:GetLeadersUseCase,
+    val deleteUserFromServerUseCase: DeleteUserFromServerUseCase,
+    val logoutUsecase: LogoutUsecase,
+    val getStatisticsUseCase: GetStatisticsUseCase
 )

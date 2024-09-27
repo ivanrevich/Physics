@@ -1,10 +1,9 @@
 package com.aivhich.physics.data.repository
 
 
-import android.util.Log
 import com.aivhich.physics.common.Result
 import com.aivhich.physics.data.datasource.UserDao
-import com.aivhich.physics.data.remote.dto.LevelDto
+import com.aivhich.physics.data.remote.dto.StatisticsResponse
 import com.aivhich.physics.data.remote.dto.toUser
 import com.aivhich.physics.data.remote.retrofit.ApiService
 import com.aivhich.physics.domain.model.User
@@ -36,6 +35,22 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteUserFromServer(token: String): Result<Boolean> {
+        try {
+            api.deleteUser(token)
+            return Result.Success(true);
+        }catch (e:Throwable){
+            return Result.Error(e);
+        }
+    }
+
+    override suspend fun getStatistics(token: String): Result<StatisticsResponse> {
+        try {
+            return Result.Success(api.statistics(token));
+        }catch (e:Throwable){
+            return Result.Error(e);
+        }
+    }
 
 
     override suspend fun delete() {

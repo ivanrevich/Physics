@@ -12,12 +12,15 @@ import com.aivhich.physics.data.repository.UserRepositoryImpl
 import com.aivhich.physics.domain.repository.LessonRepository
 import com.aivhich.physics.domain.repository.TokenRepository
 import com.aivhich.physics.domain.repository.UserRepository
+import com.aivhich.physics.domain.usecase.DeleteUserFromServerUseCase
 import com.aivhich.physics.domain.usecase.GetLeadersUseCase
 import com.aivhich.physics.domain.usecase.GetOneLessonUseCase
 import com.aivhich.physics.domain.usecase.GetPassedLessonsUseCase
+import com.aivhich.physics.domain.usecase.GetStatisticsUseCase
 import com.aivhich.physics.domain.usecase.GetUserCourseUseCase
 import com.aivhich.physics.domain.usecase.GetUserDataUseCase
 import com.aivhich.physics.domain.usecase.GetWeekPointsUseCase
+import com.aivhich.physics.domain.usecase.LogoutUsecase
 import com.aivhich.physics.domain.usecase.UpdateProgressUseCase
 import com.aivhich.physics.domain.usecase.UserUseCase
 import dagger.Module
@@ -110,7 +113,15 @@ object Module {
             getLeaders = GetLeadersUseCase(
                 tokenRepository = tokenRepository,
                 lessonRepository = lessonRepository
-            )
+            ),
+            deleteUserFromServerUseCase = DeleteUserFromServerUseCase(
+                tokenRepository = tokenRepository,
+                userRepository = repository
+            ),
+            logoutUsecase = LogoutUsecase(tokenRepository = tokenRepository,
+                userRepository = repository),
+            getStatisticsUseCase = GetStatisticsUseCase(tokenRepository = tokenRepository,
+                userRepository = repository)
         )
     }
 }

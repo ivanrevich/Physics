@@ -36,6 +36,7 @@ import com.aivhich.physics.presentation.screens.HomeScreen
 import com.aivhich.physics.presentation.screens.LeaderScreen
 import com.aivhich.physics.presentation.screens.LessonScreen
 import com.aivhich.physics.presentation.screens.ProfileScreen
+import com.aivhich.physics.presentation.screens.SettingsScreen
 import com.aivhich.physics.presentation.vm.HomeViewModel
 import com.aivhich.physics.presentation.vm.LeadersViewModel
 import com.aivhich.physics.presentation.vm.ProfileViewModel
@@ -85,7 +86,7 @@ fun BottomBar(navController: NavHostController) {
                 val selected = item.route == currentDestination?.route
 
                 NavigationBarItem(
-                    colors =  NavigationBarItemDefaults.colors(
+                    colors = NavigationBarItemDefaults.colors(
                         indicatorColor = MaterialTheme.colorScheme.primary
                     ),
                     alwaysShowLabel = false,
@@ -113,13 +114,17 @@ fun BottomBar(navController: NavHostController) {
 
 
 @Composable
-fun HomeNavGraph(navController: NavHostController,
-                 homeViewModel: HomeViewModel = hiltViewModel(),
-                 leadersViewModel: LeadersViewModel = hiltViewModel(),
-                 profileViewModel: ProfileViewModel = hiltViewModel()) {
+fun HomeNavGraph(
+    navController: NavHostController,
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    leadersViewModel: LeadersViewModel = hiltViewModel(),
+    profileViewModel: ProfileViewModel = hiltViewModel()
+) {
     val screens = listOf(
         BottomBarScreen.Home.route,
-        BottomBarScreen.Profile.route
+        BottomBarScreen.LeaderBoard.route,
+        BottomBarScreen.Profile.route,
+        DetailedScreen.Setting.route
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -129,14 +134,14 @@ fun HomeNavGraph(navController: NavHostController,
         startDestination = BottomBarScreen.Home.route,
         enterTransition = {
             slideIntoContainer(
-                if(screens.indexOf(currentDestination?.route)>screens.indexOf(navController.previousBackStackEntry?.destination?.route)) AnimatedContentTransitionScope.SlideDirection.Left else AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(300)
+                if (screens.indexOf(currentDestination?.route) > screens.indexOf(navController.previousBackStackEntry?.destination?.route)) AnimatedContentTransitionScope.SlideDirection.Left else AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = if (screens.indexOf(currentDestination?.route) == screens.indexOf(navController.previousBackStackEntry?.destination?.route)) tween(0) else tween(300)
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                if(screens.indexOf(currentDestination?.route)>screens.indexOf(navController.previousBackStackEntry?.destination?.route)) AnimatedContentTransitionScope.SlideDirection.Left else AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(300)
+                if (screens.indexOf(currentDestination?.route) > screens.indexOf(navController.previousBackStackEntry?.destination?.route)) AnimatedContentTransitionScope.SlideDirection.Left else AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = if (screens.indexOf(currentDestination?.route) == screens.indexOf(navController.previousBackStackEntry?.destination?.route)) tween(0) else tween(300)
             )
         }
     ) {
@@ -144,9 +149,11 @@ fun HomeNavGraph(navController: NavHostController,
             HomeScreen(navController, homeViewModel)
         }
         composable(route = BottomBarScreen.Profile.route) {
-            ProfileScreen(profileViewModel)
+            ProfileScreen(
+                profileViewModel
+            ) { navController.navigate(DetailedScreen.Setting.route) }
         }
-        composable(route = BottomBarScreen.LeaderBoard.route){
+        composable(route = BottomBarScreen.LeaderBoard.route) {
             LeaderScreen(leadersViewModel)
         }
         detailedViewGraph(navController)
@@ -164,12 +171,18 @@ fun NavGraphBuilder.detailedViewGraph(navController: NavHostController) {
             arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) { backStackEntry ->
             backStackEntry.arguments?.getString("id")?.let {
-                LessonScreen(it, backToMain = {navController.navigate(Graph.HOME)})
+                LessonScreen(it, backToMain = { navController.navigate(Graph.HOME) })
             }
+        }
+        composable(
+            route = DetailedScreen.Setting.route,
+        ) {
+            SettingsScreen()
         }
     }
 }
 
 sealed class DetailedScreen(val route: String) {
     object Lesson : DetailedScreen(route = "lesson/{id}")
+    object Setting : DetailedScreen(route = "setting")
 }

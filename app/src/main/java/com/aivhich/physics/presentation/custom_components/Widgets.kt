@@ -304,6 +304,11 @@ fun HtmlText(html: String? = "", modifier: Modifier = Modifier) {
             <!-- To automatically render math in text elements, include the auto-render extension: -->
             <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
                 onload="renderMathInElement(document.body);"></script>
+            <style>
+                img {
+                  max-width:95%;
+                }
+            </style>
         </head>
         <body style="padding-right:10px; padding-left:10px;">
         ${html ?: ""}

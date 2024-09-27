@@ -1,10 +1,12 @@
 package com.aivhich.physics.presentation.vm
 
+import android.app.Activity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aivhich.physics.common.Result
+import com.aivhich.physics.data.remote.dto.StatisticsResponse
 import com.aivhich.physics.domain.model.User
 import com.aivhich.physics.domain.usecase.UserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,6 +38,12 @@ class ProfileViewModel @Inject constructor(private val userUseCase: UserUseCase)
         initModel()
     }
 
+    private val _stats = MutableLiveData<StatisticsResponse>()
+    val stats: LiveData<StatisticsResponse> get() = _stats
+    private fun setStats(statisticsResponse: StatisticsResponse) {
+        _stats.value = statisticsResponse
+    }
+
 
     fun initModel() {
         viewModelScope.launch {
@@ -47,6 +55,22 @@ class ProfileViewModel @Inject constructor(private val userUseCase: UserUseCase)
                 }
                 is Result.Error->{ }
             }
+            when(val answer = userUseCase.getStatisticsUseCase()){
+                is Result.Success->{
+                    setStats(answer.data)
+                }
+                is Result.Error->{
+
+                }
+            }
+        }
+    }
+
+    fun logOut(activity: Activity?) {
+        viewModelScope.launch {
+            userUseCase.logoutUsecase()
+            activity?.finishAffinity()
+            activity?.finishAndRemoveTask()
         }
     }
 }

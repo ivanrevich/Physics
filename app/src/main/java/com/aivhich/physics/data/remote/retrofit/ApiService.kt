@@ -5,9 +5,11 @@ import com.aivhich.physics.data.remote.dto.CourseDto
 import com.aivhich.physics.data.remote.dto.LeaderUsersResponse
 import com.aivhich.physics.data.remote.dto.LessonDto
 import com.aivhich.physics.data.remote.dto.LevelDto
+import com.aivhich.physics.data.remote.dto.StatisticsResponse
 import com.aivhich.physics.data.remote.dto.UpdateProgress
 import com.aivhich.physics.data.remote.dto.UserDto
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
@@ -40,12 +42,19 @@ interface ApiService {
     @Headers("Content-Type: application/json")
     suspend fun passedLessons(@Header("Authorization") authorization: String): CourseDto
 
+    @DELETE("/api/v1/users/delete")
+    @Headers("Content-Type: application/json")
+    suspend fun deleteUser(@Header("Authorization") authorization: String)
 
     @POST("/api/v1/lessons/updateProgress")
     @Headers("Content-Type: application/json")
     suspend fun updateProgress(
         @Header("Authorization") authorization: String,
         @Body updateProgress: UpdateProgress): Long
+
+    @GET("/api/v1/users/statistics")
+    @Headers("Content-Type: application/json")
+    suspend fun statistics(@Header("Authorization") authorization: String): StatisticsResponse
 
     @GET("/api/v1/lessons/weekPoints")
     @Headers("Content-Type: application/json")

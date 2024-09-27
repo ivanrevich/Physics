@@ -1,9 +1,11 @@
 package com.aivhich.physics.presentation.screens
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,33 +28,40 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.aivhich.physics.R
 import com.aivhich.physics.presentation.vm.ProfileViewModel
 import com.aivhich.zaryaui.AvatarCircle
 import com.aivhich.zaryaui.BodyText
-import com.aivhich.zaryaui.CarouselWithIconText
 import com.aivhich.zaryaui.FieldBoxWithText
-import com.aivhich.zaryaui.HeadlineText
 import com.aivhich.zaryaui.IconButton
 import com.aivhich.zaryaui.MainButton
 import com.aivhich.zaryaui.PointsPanel
 import com.aivhich.zaryaui.StatisticBlockPanel
-import com.aivhich.zaryaui.SubText
 import com.aivhich.zaryaui.SubheadingText
 import com.aivhich.zaryaui.UsualPanel
-import com.aivhich.zaryaui.models.CarouselIconItem
+
+
+fun shareContent(context: Context, textToShare: String) {
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, textToShare)
+        type = "text/plain"
+    }
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    context.startActivity(shareIntent)
+}
 
 @Composable
-fun ProfileScreen(vm: ProfileViewModel) {
+fun ProfileScreen(vm: ProfileViewModel, toSettings:()->Unit) {
     val name by vm.name.observeAsState()
     val email by vm.email.observeAsState()
     val nickname by vm.nickname.observeAsState()
-
+    val stats by vm.stats.observeAsState()
+    val activity = (LocalContext.current as? Activity)
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = "Unit1") {
         vm.initModel()
@@ -71,13 +80,17 @@ fun ProfileScreen(vm: ProfileViewModel) {
                     contentColor = MaterialTheme.colorScheme.onBackground,
                     painter = painterResource(id = R.drawable.baseline_settings_24),
                     size = 28.dp,
-                    onClick = {},
+                    onClick = {
+                        toSettings()
+                    },
                 )
                 IconButton(
                     contentColor = MaterialTheme.colorScheme.onBackground,
                     painter = painterResource(id = R.drawable.baseline_logout_24),
                     size = 28.dp,
-                    onClick = {},
+                    onClick = {
+                        vm.logOut(activity)
+                    },
                 )
             }
         }) { pd ->
@@ -130,17 +143,17 @@ fun ProfileScreen(vm: ProfileViewModel) {
                     ) {
                         Row(Modifier.fillMaxWidth()) {
                             StatisticBlockPanel(
-                                "Решено", "35", "задач",
+                                "Набрал", (stats?.points?:0).toString(), "очков",
                                 modifier = Modifier.weight(1f)
                             )
                             VerticalDivider(Modifier.width(1.dp))
                             StatisticBlockPanel(
-                                "Решает", "76%", "задач",
+                                "Решил", (stats?.answerTasks?:0).toString(), "задач",
                                 modifier = Modifier.weight(1f)
                             )
                             VerticalDivider(Modifier.width(1.dp))
                             StatisticBlockPanel(
-                                "Выучено", "17", "формул",
+                                "Прошел", "${(stats?.courseProgress?:0)}%", "курса",
                                 modifier = Modifier.weight(1f)
                             )
                         }
@@ -168,7 +181,9 @@ fun ProfileScreen(vm: ProfileViewModel) {
                             MainButton(
                                 backgroundColor = MaterialTheme.colorScheme.onBackground,
                                 contentColor = MaterialTheme.colorScheme.tertiary,
-                                onClick = { /*TODO*/ },
+                                onClick = {
+                                    shareContent(context, "ссылка на скачивание в будущем")
+                                },
                                 shape = RoundedCornerShape(50),
                                 modifier = Modifier
                                     .height(48.dp)
