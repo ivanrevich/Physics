@@ -6,5 +6,6 @@ data class UserUseCase(
     val getOneLesson:GetOneLessonUseCase,
     val updateProgressUseCase: UpdateProgressUseCase,
     val getPassedLessonsUseCase: GetPassedLessonsUseCase,
-    val getWeekPointsUseCase: GetWeekPointsUseCase
+    val getWeekPointsUseCase: GetWeekPointsUseCase,
+    val getLeaders:GetLeadersUseCase
 )

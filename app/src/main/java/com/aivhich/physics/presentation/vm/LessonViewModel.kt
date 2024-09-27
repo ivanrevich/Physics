@@ -11,6 +11,7 @@ import com.aivhich.passport.common.Event
 import com.aivhich.passport.common.UiText
 import com.aivhich.physics.common.AnswerCheck
 import com.aivhich.physics.common.Result
+import com.aivhich.physics.common.UIStatus
 import com.aivhich.physics.data.remote.dto.InfoType
 import com.aivhich.physics.data.remote.dto.LessonDto
 import com.aivhich.physics.data.remote.dto.LevelDto
@@ -59,20 +60,18 @@ class LessonViewModel @Inject constructor(private val userUseCase: UserUseCase) 
     fun nextPage() {
         if ((lesson.value?.pages?.size?.minus(1) ?: 0) > pageIdx.value!!) {
             setPage(pageIdx.value!!.plus(1))
+
             _answers.value = listOf()
             setIsCorrectAnswer(AnswerCheck.NOT_CHECKED)
         } else {
             viewModelScope.launch {
                 when(val out = userUseCase.updateProgressUseCase(updateProgress)){
                     is Result.Success->{
-                        Log.d("out", out.data.toString())
                         points = out.data
                         _isResult.value = true
                         setIsCorrectAnswer(AnswerCheck.IS_CORRECT)
                     }
-                    is Result.Error->{
-                        Log.d("out", "errr")
-                    }
+                    is Result.Error->{ }
                 }
             }
         }
@@ -117,9 +116,6 @@ class LessonViewModel @Inject constructor(private val userUseCase: UserUseCase) 
         viewModelScope.launch {
             if (lesson.value?.pages?.get(pageIdx.value!!)?.infoType == InfoType.TASK) {
                 if(answers.value?.isNotEmpty()==true) {
-                    Log.d("out", answers.value!!.toString()+" "+lesson.value?.pages?.get(
-                        pageIdx.value ?: 0
-                    )?.form?.rightAnswers!!.toString())
                     if (answers.value!!.containsAll(
                             lesson.value?.pages?.get(
                                 pageIdx.value ?: 0
@@ -127,6 +123,7 @@ class LessonViewModel @Inject constructor(private val userUseCase: UserUseCase) 
                         )
                     ) {
                         setIsCorrectAnswer(AnswerCheck.IS_CORRECT)
+
                         updateProgress.passedPages =
                             updateProgress.passedPages
                                 .toSet()

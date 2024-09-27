@@ -7,7 +7,7 @@ import com.aivhich.physics.domain.model.User
 
 @Database(
     entities = [User::class],
-    version = 1,
+    version = 2,
 )
 abstract class UserDatabase: RoomDatabase(){
     abstract val userDao: UserDao

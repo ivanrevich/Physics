@@ -1,6 +1,5 @@
 package com.aivhich.physics.presentation.vm
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -27,16 +26,26 @@ class ProfileViewModel @Inject constructor(private val userUseCase: UserUseCase)
         _email.value = email
     }
 
+    private val _nickname = MutableLiveData<String>()
+    val nickname: LiveData<String> get() = _nickname
+    private fun setNickname(nickname:String) {
+        _nickname.value = nickname
+    }
+
     init {
+        initModel()
+    }
+
+
+    fun initModel() {
         viewModelScope.launch {
             when(val userdataReq: Result<User> = userUseCase.getUserDataUseCase()){
                 is Result.Success->{
                     setName("${userdataReq.data.name} ${userdataReq.data.surname}")
                     setEmail(userdataReq.data.email)
+                    setNickname(userdataReq.data.nickname)
                 }
-                is Result.Error->{
-                    Log.d("out","Error happened")
-                }
+                is Result.Error->{ }
             }
         }
     }

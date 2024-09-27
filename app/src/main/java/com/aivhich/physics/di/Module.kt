@@ -12,6 +12,7 @@ import com.aivhich.physics.data.repository.UserRepositoryImpl
 import com.aivhich.physics.domain.repository.LessonRepository
 import com.aivhich.physics.domain.repository.TokenRepository
 import com.aivhich.physics.domain.repository.UserRepository
+import com.aivhich.physics.domain.usecase.GetLeadersUseCase
 import com.aivhich.physics.domain.usecase.GetOneLessonUseCase
 import com.aivhich.physics.domain.usecase.GetPassedLessonsUseCase
 import com.aivhich.physics.domain.usecase.GetUserCourseUseCase
@@ -105,6 +106,10 @@ object Module {
             getWeekPointsUseCase = GetWeekPointsUseCase(
                 lessonRepository = lessonRepository,
                 tokenRepository = tokenRepository
+            ),
+            getLeaders = GetLeadersUseCase(
+                tokenRepository = tokenRepository,
+                lessonRepository = lessonRepository
             )
         )
     }

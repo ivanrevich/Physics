@@ -79,7 +79,7 @@ fun TaskCard(html: String?, vm: LessonViewModel, pageDto: PageDto) {
 
                 FormType.CALC -> {
                     CalcComponent(
-                        if (choosedItems!!.isNotEmpty()) choosedItems?.get(0) ?: "" else "",
+                        if (choosedItems?.isNotEmpty()==true) choosedItems?.get(0) ?: "" else "",
                         vm,
                         Modifier.weight(1f)
                     )

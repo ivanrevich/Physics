@@ -9,10 +9,16 @@ sealed class BottomBarScreen(
     val icon: Int,
     val activeIcon: Int
 ) {
+    object LeaderBoard: BottomBarScreen(
+        route = "LEADER",
+        title = "Лучшие",
+        icon = R.drawable.baseline_leaderboard_24,
+        activeIcon = R.drawable.baseline_leaderboard_24
+    )
 
     object Home : BottomBarScreen(
         route = "HOME",
-        title = "Дом",
+        title = "Главная",
         icon = R.drawable.baseline_home_24,
         activeIcon = R.drawable.baseline_home_24
     )

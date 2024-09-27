@@ -34,7 +34,7 @@ class TokenRepositoryImpl @Inject constructor(
     override suspend fun refresh(): Result<Token> {
         try {
             val old = dao.getToken()
-            val answer = api.refreshToken(old.refreshToken)
+            val answer = api.refreshToken("Bearer "+old.refreshToken)
             val token = Token(0, answer.accessToken, answer.refreshToken)
             remove()
             save(token)

@@ -21,6 +21,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -31,8 +33,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.aivhich.physics.presentation.screens.HomeScreen
+import com.aivhich.physics.presentation.screens.LeaderScreen
 import com.aivhich.physics.presentation.screens.LessonScreen
 import com.aivhich.physics.presentation.screens.ProfileScreen
+import com.aivhich.physics.presentation.vm.HomeViewModel
+import com.aivhich.physics.presentation.vm.LeadersViewModel
+import com.aivhich.physics.presentation.vm.ProfileViewModel
 import com.aivhich.zaryaui.BodyText
 
 @Composable
@@ -55,6 +61,7 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
 fun BottomBar(navController: NavHostController) {
     val screens = listOf(
         BottomBarScreen.Home,
+        BottomBarScreen.LeaderBoard,
         BottomBarScreen.Profile
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -106,7 +113,10 @@ fun BottomBar(navController: NavHostController) {
 
 
 @Composable
-fun HomeNavGraph(navController: NavHostController) {
+fun HomeNavGraph(navController: NavHostController,
+                 homeViewModel: HomeViewModel = hiltViewModel(),
+                 leadersViewModel: LeadersViewModel = hiltViewModel(),
+                 profileViewModel: ProfileViewModel = hiltViewModel()) {
     val screens = listOf(
         BottomBarScreen.Home.route,
         BottomBarScreen.Profile.route
@@ -131,10 +141,13 @@ fun HomeNavGraph(navController: NavHostController) {
         }
     ) {
         composable(route = BottomBarScreen.Home.route) {
-            HomeScreen(navController)
+            HomeScreen(navController, homeViewModel)
         }
         composable(route = BottomBarScreen.Profile.route) {
-            ProfileScreen()
+            ProfileScreen(profileViewModel)
+        }
+        composable(route = BottomBarScreen.LeaderBoard.route){
+            LeaderScreen(leadersViewModel)
         }
         detailedViewGraph(navController)
     }

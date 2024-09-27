@@ -1,8 +1,6 @@
 package com.aivhich.physics.presentation.screens
 
-import android.os.Build
 import android.view.HapticFeedbackConstants
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,10 +32,11 @@ import com.aivhich.zaryaui.MainButton
 import com.aivhich.zaryaui.UsualProgressBar
 import java.util.UUID
 
-@RequiresApi(Build.VERSION_CODES.R)
+
 @Composable
-fun LessonScreen(id: String, vm: LessonViewModel = hiltViewModel(), backToMain:()->Unit) {
+fun LessonScreen(id: String, vm: LessonViewModel = hiltViewModel(), backToMain: () -> Unit) {
     vm.init(UUID.fromString(id))
+
     val lesson by vm.lesson.observeAsState()
     val index by vm.pageIdx.observeAsState()
     val page: PageDto? = lesson?.pages?.get(index ?: 0)
@@ -45,11 +44,12 @@ fun LessonScreen(id: String, vm: LessonViewModel = hiltViewModel(), backToMain:(
     val status by vm.isCorrectAnswer.observeAsState()
     val view = LocalView.current
 
+
     Scaffold(topBar = {
         UsualProgressBar(
             progress = if (isResult == false) {
-                (page?.stepId?.toFloat()?.plus(0.5F) ?: 0F) / (lesson?.pages?.size?.toFloat()
-                    ?: 1F)
+                val stepId: Float = page?.stepId?.toFloat() ?: 0F
+                (stepId) / (lesson?.pages?.size?.toFloat() ?: 1F)
             } else {
                 1F
             }
@@ -66,7 +66,13 @@ fun LessonScreen(id: String, vm: LessonViewModel = hiltViewModel(), backToMain:(
                                 .shadow(1.5.dp, clip = true, shape = RoundedCornerShape(25))
                                 .fillMaxWidth(1f)
                                 .height(48.dp),
-                            onClick = { vm.check() }
+                            onClick = {
+                                if (isResult == false) {
+                                    vm.check()
+                                } else {
+                                    backToMain()
+                                }
+                            }
                         ) {
                             BodyText(text = "Далее")
                         }
@@ -80,7 +86,9 @@ fun LessonScreen(id: String, vm: LessonViewModel = hiltViewModel(), backToMain:(
                                         .shadow(1.5.dp, clip = true, shape = RoundedCornerShape(25))
                                         .fillMaxWidth(1f)
                                         .height(48.dp),
-                                    onClick = { vm.check() }
+                                    onClick = {
+                                        vm.check()
+                                    }
                                 ) {
                                     BodyText(text = "Проверить")
                                 }
@@ -95,7 +103,13 @@ fun LessonScreen(id: String, vm: LessonViewModel = hiltViewModel(), backToMain:(
                                         .shadow(1.5.dp, clip = true, shape = RoundedCornerShape(25))
                                         .fillMaxWidth(1f)
                                         .height(48.dp),
-                                    onClick = { vm.nextPage() }
+                                    onClick = {
+                                        if (isResult == false) {
+                                            vm.nextPage()
+                                        } else {
+                                            backToMain()
+                                        }
+                                    }
                                 ) {
                                     BodyText(text = "Далее")
                                 }
@@ -145,8 +159,8 @@ fun LessonScreen(id: String, vm: LessonViewModel = hiltViewModel(), backToMain:(
                         }
                     } else {
                         FinalResultCard(
-                            result = "${vm.points}/${lesson!!.pages.sumOf { it.points }}",
-                            success = (vm.points>(lesson!!.pages.sumOf { it.points })*0.5)
+                            result = "${vm.points}/${lesson!!.pages.sumOf { it.points ?: 0 }}",
+                            success = (vm.points > (lesson!!.pages.sumOf { it.points ?: 0 }) * 0.5)
                         )
                     }
                 }

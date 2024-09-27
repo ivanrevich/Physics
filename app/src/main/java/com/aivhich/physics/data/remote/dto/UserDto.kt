@@ -1,5 +1,6 @@
 package com.aivhich.physics.data.remote.dto
 
+import android.util.Log
 import com.aivhich.physics.domain.model.User
 import com.google.gson.annotations.SerializedName
 import java.time.Instant
@@ -34,6 +35,7 @@ fun UserDto.toUser(): User {
         id = id,
         name = name,
         surname = surname,
+        nickname = nickname,
         code = code,
         email = email,
         isEmailVerified = isEmailVerified,

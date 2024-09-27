@@ -1,16 +1,13 @@
 package com.aivhich.physics.presentation.custom_components
 
-import android.util.Log
 import android.webkit.WebView
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -18,20 +15,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -44,6 +39,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import com.aivhich.physics.R
 import com.aivhich.physics.presentation.vm.LessonViewModel
+import com.aivhich.zaryaui.BodyText
+import com.aivhich.zaryaui.HeadlineText
 import com.aivhich.zaryaui.OutlinedField
 import com.aivhich.zaryaui.PointsPanel
 import com.aivhich.zaryaui.SubText
@@ -52,17 +49,46 @@ import com.aivhich.zaryaui.UsualPanel
 
 
 @Composable
-fun LevelItem(text: String) {
-    Box(Modifier.fillMaxWidth()) {
-        SubText(text = text, modifier = Modifier.align(Alignment.Center))
+fun LevelItem(text: String, level:String, fill:Boolean) {
+    Column(Modifier.fillMaxWidth()) {
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(32.dp)
+                .height(16.dp)
                 .zIndex(0f)
         ) {
             val strokeWidth = 12.dp
-            val color = Color.Green
+            val color = if (fill) Color.Green else Color(0xFF929292)
+            val strokeWidthPx = density.run { strokeWidth.toPx() }
+            val height = size.height
+            drawLine(
+                start = Offset(x = 32.dp.toPx(), y = 0f),
+                end = Offset(x = 32.dp.toPx(), y = height),
+                color = color,
+                strokeWidth = strokeWidthPx,
+            )
+        }
+        UsualPanel(
+            background = MaterialTheme.colorScheme.background,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+                .zIndex(1f)
+        ) {
+            Column(Modifier.padding(15.dp, 20.dp)) {
+                HeadlineText(text = text)
+                Spacer(Modifier.height(5.dp))
+                BodyText(text = level, color = Color.Gray)
+            }
+        }
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .zIndex(0f)
+        ) {
+            val strokeWidth = 12.dp
+            val color = if (fill) Color.Green else Color(0xFF929292)
             val strokeWidthPx = density.run { strokeWidth.toPx() }
             val height = size.height
             drawLine(
@@ -78,6 +104,8 @@ fun LevelItem(text: String) {
 @Composable
 fun LessonItem(
     title: String, time: String, points: String, passed: Boolean,
+    last:Boolean,
+    mypoints: String,
     onClick: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -86,47 +114,32 @@ fun LessonItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .zIndex(1f)
-                .clickable { onClick() }
+                .shadow(0.75.dp, RoundedCornerShape(20.dp))
+                .clip(RoundedCornerShape(20.dp))
+                .clickable { if(passed || last)onClick() }
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(5.dp, 10.dp)
+                    .padding(10.dp, 10.dp)
                     .height(IntrinsicSize.Max)
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxHeight()
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.SpaceAround,
+                    modifier = Modifier.fillMaxHeight()
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.baseline_bolt_24),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .clip(shape = CircleShape)
-                            .size(54.dp)
-                            .border(5.dp, MaterialTheme.colorScheme.tertiary, CircleShape)
-                            .padding(5.dp)
+                    SubheadingText(
+                        text = title,
+                        fontWeight = FontWeight.W600,
+                        textAlign = TextAlign.Start
                     )
-                    Spacer(Modifier.width(8.dp))
-                    Column(
-                        horizontalAlignment = Alignment.Start,
-                        verticalArrangement = Arrangement.SpaceAround,
-                        modifier = Modifier.fillMaxHeight()
-                    ) {
-                        SubheadingText(
-                            text = title,
-                            fontWeight = FontWeight.W600,
-                            textAlign = TextAlign.Start
-                        )
-                        SubText(text = "$time мин.")
-                    }
+                    SubText(text = "$time мин.")
                 }
                 PointsPanel(
-                    text = points,
+                    text = if (mypoints!="0") "${mypoints}/${points}" else points,
                     painter = painterResource(id = R.drawable.baseline_bolt_24),
                     true
                 )
@@ -179,6 +192,20 @@ fun RadioButtonOption(text: String, isSelected: Boolean, onSelect: () -> Unit) {
             onClick = onSelect,
         )
         Text(text)
+    }
+}
+
+@Composable
+fun LoadingPage(pd:PaddingValues){
+    Column(
+        modifier = Modifier
+            .padding(pd)
+            .padding(10.dp, 15.dp, 10.dp, 5.dp)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator()
     }
 }
 

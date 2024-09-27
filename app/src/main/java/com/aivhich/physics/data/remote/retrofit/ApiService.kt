@@ -2,6 +2,7 @@ package com.aivhich.physics.data.remote.retrofit
 
 import com.aivhich.passport.data.remote.dto.response.AuthenticationResponse
 import com.aivhich.physics.data.remote.dto.CourseDto
+import com.aivhich.physics.data.remote.dto.LeaderUsersResponse
 import com.aivhich.physics.data.remote.dto.LessonDto
 import com.aivhich.physics.data.remote.dto.LevelDto
 import com.aivhich.physics.data.remote.dto.UpdateProgress
@@ -51,4 +52,10 @@ interface ApiService {
     suspend fun getWeekPoints(
         @Header("Authorization") authorization: String,
     ):Long
+
+    @GET("/api/v1/users/leaderboard")
+    @Headers("Content-Type: application/json")
+    suspend fun getLeaders(
+        @Header("Authorization") authorization: String,
+    ):LeaderUsersResponse
 }

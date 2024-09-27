@@ -22,8 +22,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val accessToken = intent.getStringExtra("access_token")
-        val refreshToken = intent.getStringExtra("refresh_token")
         setContent {
             PhysicsTheme {
                 Surface(

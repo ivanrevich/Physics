@@ -1,8 +1,8 @@
 package com.aivhich.physics.data.repository
 
-import android.util.Log
 import com.aivhich.physics.common.Result
 import com.aivhich.physics.data.remote.dto.CourseDto
+import com.aivhich.physics.data.remote.dto.LeaderUsersResponse
 import com.aivhich.physics.data.remote.dto.LessonDto
 import com.aivhich.physics.data.remote.dto.LevelDto
 import com.aivhich.physics.data.remote.dto.UpdateProgress
@@ -54,6 +54,14 @@ class LessonRepositoryImpl @Inject constructor(
     override suspend fun passedLesson(token: String): Result<CourseDto> {
         return try {
             Result.Success(api.passedLessons("Bearer $token"))
+        }catch (e:Throwable){
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun getLeaders(token: String): Result<LeaderUsersResponse> {
+        return try{
+            Result.Success(api.getLeaders("Bearer $token"))
         }catch (e:Throwable){
             Result.Error(e)
         }

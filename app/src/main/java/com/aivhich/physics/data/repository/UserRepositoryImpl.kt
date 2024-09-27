@@ -1,6 +1,7 @@
 package com.aivhich.physics.data.repository
 
 
+import android.util.Log
 import com.aivhich.physics.common.Result
 import com.aivhich.physics.data.datasource.UserDao
 import com.aivhich.physics.data.remote.dto.LevelDto
@@ -23,6 +24,7 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun get(token: String): Result<User> {
         try {
             var user:User? = dao.get()
+
             if(user==null || user.timestamp + 30 < ZonedDateTime.now(ZoneId.of("UTC-0")).toEpochSecond()){
                 dao.delete()
                 user = api.getUserData("Bearer $token")?.toUser()
